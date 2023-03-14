@@ -1,22 +1,25 @@
 import React, { Component } from "react";
-import { Grid, Button, Typography } from "@material-ui/core";
+import { Grid, Button, Typography, Slider } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
 
 export default class Room extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      votesToSkip: 2,
+      votesToSkip: 5,
       guestCanPause: false,
       isHost: false,
       showSettings: false,
+      gameStarted: false,
     };
     this.roomCode = this.props.match.params.roomCode;
     this.getRoomDetails();
     this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
     this.updateShowSettings = this.updateShowSettings.bind(this);
+    this.updateGameStarted = this.updateGameStarted.bind(this);
     this.renderSettingsButton = this.renderSettingsButton.bind(this);
     this.renderSettings = this.renderSettings.bind(this);
+    this.renderGame = this.renderGame.bind(this);
     this.getRoomDetails = this.getRoomDetails.bind(this);
     this.getRoomDetails();
   }
@@ -51,6 +54,42 @@ export default class Room extends Component {
     });
   }
 
+  updateGameStarted(value){
+    this.setState({
+      gameStarted: value,
+    });
+  }
+
+  renderGame(){
+    return (
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Typography variant="h3" compact="h3">
+            Spoofipy
+          </Typography>
+        </Grid>
+
+        <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="on"></Slider>
+
+        <Grid item xs={12} align="center">
+          <Button variant="contained" color="primary" size="large" onClick={() => this.updateGameStarted(false)}>
+            End Game
+          </Button>
+        </Grid>
+
+        <Grid item xs={4} align="center">
+          <Typography variant="h6" component="h6">Code: {this.roomCode}</Typography>
+        </Grid>
+        <Grid item xs={4} align="center">
+          <Typography variant="h6" component="h6">Songs: {this.state.votesToSkip}</Typography>
+        </Grid>
+        <Grid item xs={4} align="center">
+          <Typography variant="h6" component="h6">Players: N/A</Typography>
+        </Grid>
+      </Grid>
+    );
+  }
+
   updateShowSettings(value){
     this.setState({
       showSettings: value,
@@ -59,7 +98,7 @@ export default class Room extends Component {
 
   renderSettings(){
     return (
-      <Grid container spacing={1}>
+      <Grid container spacing={8}>
         <Grid item xs={12} align="center">
           <CreateRoomPage update={true} 
           votesToSkip={this.state.votesToSkip} 
@@ -79,31 +118,46 @@ export default class Room extends Component {
 
   renderSettingsButton(){
     return(
+      <Grid container spacing={1}>
+        <Grid item xs={12} align="center">
+          <Button variant="text" color="primary" onClick={() => this.updateShowSettings(true)}>
+            Settings
+          </Button>
+        </Grid>
       <Grid item xs={12} align="center">
-        <Button variant="contained" color="primary" onClick={() => this.updateShowSettings(true)}>
-          Settings
+        <Button variant="contained" color="primary" size="large" onClick={() => this.updateGameStarted(true)}>
+          Start Game
         </Button>
       </Grid>
+    </Grid>
     );
   }
 
   render() {
+    if (this.state.gameStarted){
+      return this.renderGame();
+    }
     if (this.state.showSettings){
       return this.renderSettings();
     }
     return (
       <Grid container spacing={1}>
         <Grid item xs={12} align="center">
+          <Typography variant="h3" compact="h3">
+            Spoofipy
+          </Typography>
+        </Grid>
+        <Grid item xs={12} align="center">
           <Typography variant="h4" component="h4">Code: {this.roomCode}</Typography>
         </Grid>
         <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">Votes: {this.state.votesToSkip}</Typography>
+          <Typography variant="h6" component="h6">Songs: {this.state.votesToSkip}</Typography>
         </Grid>
         <Grid item xs={12} align="center">
-        <Typography variant="h6" component="h6">Guest Can Pause: {this.state.guestCanPause.toString()}</Typography>
+        <Typography variant="h6" component="h6">Game Mode: {this.state.guestCanPause.toString() === "true" ? "1" : "2"}</Typography>
         </Grid>
         <Grid item xs={12} align="center">
-          <Typography variant="h6" component="h6">Host: {this.state.isHost.toString()}</Typography>
+          <Typography variant="h6" component="h6">{this.state.isHost.toString() === "true" ? "You are the host!" : "Waiting for host..."}</Typography>
         </Grid>
         {this.state.isHost ? this.renderSettingsButton() : null}
         <Grid item xs={12} align="center">

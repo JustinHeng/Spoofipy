@@ -15,7 +15,7 @@ import Alert from "@material-ui/lab/Alert";
 export default class CreateRoomPage extends Component {
   static defaultProps = {
     guestCanPause: true,
-    votesToSkip: 2,
+    votesToSkip: 5,
     update: false,
     roomCode: null,
     updateCallback: () => {},
@@ -123,6 +123,7 @@ export default class CreateRoomPage extends Component {
   }
 
   render() {
+    
     const title = this.props.update ? "Update Room" : "Create a Room"
 
     return (
@@ -134,6 +135,11 @@ export default class CreateRoomPage extends Component {
           </Collapse>
         </Grid>
         <Grid item xs={12} align="center">
+          <Typography variant="h3" compact="h3">
+            Spoofipy
+          </Typography>
+        </Grid>
+        <Grid item xs={12} align="center">
           <Typography component="h4" variant="h4">
             {title}
           </Typography>
@@ -141,7 +147,7 @@ export default class CreateRoomPage extends Component {
         <Grid item xs={12} align="center">
           <FormControl component="fieldset">
             <FormHelperText>
-              <div align="center">Guest Control of Playback State</div>
+              <div align="center">Choose a Game Mode</div>
             </FormHelperText>
             <RadioGroup
               row
@@ -151,13 +157,13 @@ export default class CreateRoomPage extends Component {
               <FormControlLabel
                 value="true"
                 control={<Radio color="primary" />}
-                label="Play/Pause"
+                label="Game Mode 1"
                 labelPlacement="bottom"
               />
               <FormControlLabel
                 value="false"
                 control={<Radio color="secondary" />}
-                label="No Control"
+                label="Game Mode 2"
                 labelPlacement="bottom"
               />
             </RadioGroup>
@@ -176,7 +182,7 @@ export default class CreateRoomPage extends Component {
               }}
             />
             <FormHelperText>
-              <div align="center">Votes Required To Skip Song</div>
+              <div align="center"># of Songs Played</div>
             </FormHelperText>
           </FormControl>
         </Grid>
