@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Grid, Button, Typography, Slider } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
 export default class Room extends Component {
   constructor(props) {
@@ -12,6 +13,7 @@ export default class Room extends Component {
       showSettings: false,
       gameStarted: false,
       spotifyAuthenticated: false,
+      song: {}
     };
     this.roomCode = this.props.match.params.roomCode;
     this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
@@ -22,9 +24,17 @@ export default class Room extends Component {
     this.renderGame = this.renderGame.bind(this);
     this.getRoomDetails = this.getRoomDetails.bind(this);
     this.authenticateSpotify = this.authenticateSpotify.bind(this);
+    this.getCurrentSong = this.getCurrentSong.bind(this);
     this.getRoomDetails();
   }
 
+  componentDidMount() {
+    this.interval = setInterval(this.getCurrentSong, 1000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   getRoomDetails() {
     return fetch("/api/get-room" + "?code=" + this.roomCode)
@@ -63,6 +73,16 @@ export default class Room extends Component {
       });
   }
 
+  getCurrentSong() {
+    fetch('/spotify/current-song').then((response) => {
+      if (!response.ok) {
+        return {};
+      } else {
+        return response.json();
+      }
+    }).then((data) => this.setState({song: data}));
+  }
+
   leaveButtonPressed() {
     const requestOptions = {
       method: "POST",
@@ -88,6 +108,7 @@ export default class Room extends Component {
             Spoofipy
           </Typography>
         </Grid>
+        <MusicPlayer {...this.state.song} />
 
         <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="on"></Slider>
 
