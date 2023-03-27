@@ -36,6 +36,10 @@ export default class Room extends Component {
     clearInterval(this.interval);
   }
 
+  getAccessToken() {
+    return fetch("/api/token").then((response) => console.log(response));
+  }
+
   getRoomDetails() {
     return fetch("/api/get-room" + "?code=" + this.roomCode)
       .then((response) => {
@@ -108,9 +112,10 @@ export default class Room extends Component {
             Spoofipy
           </Typography>
         </Grid>
+        {/* <Player accessToken={} /> */}
         <MusicPlayer {...this.state.song} />
 
-        <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="on"></Slider>
+        {/* <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="on"></Slider> */}
 
         <Grid item xs={12} align="center">
           <Button variant="contained" color="primary" size="large" onClick={() => this.updateGameStarted(false)}>
