@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from .util import *
 from api.models import Room
 from .models import Vote
+import json
 
 
 class AuthURL(APIView):
@@ -138,12 +139,14 @@ class SkipSong(APIView):
         room = Room.objects.filter(code=room_code)[0]
         votes = Vote.objects.filter(room=room, song_id=room.current_song)
         votes_needed = room.votes_to_skip
+        data = json.loads(request.body.decode("utf-8"))
+        score = data["score"]
 
         if self.request.session.session_key == room.host:# or len(votes) + 1 >= votes_needed:
             votes.delete()
             skip_song(room.host)
         else:
-            vote = Vote(user=self.request.session.session_key, room=room, song_id=room.current_song)
+            vote = Vote(user=self.request.session.session_key, room=room, song_id=room.current_song, score=score)
             vote.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
