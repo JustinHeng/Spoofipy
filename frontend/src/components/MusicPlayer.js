@@ -12,6 +12,7 @@ export default class MusicPlayer extends Component {
           };
         this.renderResults = this.renderResults.bind(this);
         this.renderLeaderboard = this.renderLeaderboard.bind(this);
+        this.renderSkipButton = this.renderSkipButton.bind(this);
     }
     leaderboard = [];
 
@@ -61,6 +62,14 @@ export default class MusicPlayer extends Component {
           );
     }
 
+    renderSkipButton() {
+        return(
+            <Button variant="contained" color="secondary" onClick={() => this.skipSong()}>
+                Skip
+            </Button>
+        );
+    }
+
     skipSong(){
         this.setState({
             sliderValue: 50
@@ -85,6 +94,15 @@ export default class MusicPlayer extends Component {
               }),
         };
         fetch("/spotify/skip", requestOptions);
+
+        if (this.props.checkHost === "true"){
+            fetch("/api/get-votes")
+            .then((response) => response.json())
+            .then((data) => {
+            console.log(data.vote_average)
+            //to do: show the value on the frontend
+            });
+        }
         this.setState({
             currentSongNumber: this.state.currentSongNumber + 1,
             sliderValue: 50
@@ -126,20 +144,21 @@ export default class MusicPlayer extends Component {
                             <img src={this.props.image_url} height="100%" width="100%"></img>
                         </Grid>
                         <Grid item align="center" xs={4}>
-                            <Typography component="h5" variant="h5">{this.props.title}</Typography>
+                            <Typography component="h5" variant="h5">{this.props.title} </Typography>
                             <Typography color="textSecondary" variant="subtitle1">{this.props.artist}</Typography>
                             <div>
                                 {/* <Button variant="contained" color="primary" onClick={() => {
                                 this.props.is_playing ? this.pauseSong() : this.playSong();}}>
                                     {this.props.is_playing ? "Pause" : "Play"}
                                 </Button> */}
-                                <Button variant="contained" color="secondary" onClick={() => this.skipSong()}>
-                                    Skip
-                                </Button>
+
+                                {this.props.checkHost === "true" ? this.renderSkipButton() : null}
                                 <Button variant="contained" color="primary" onClick={() => this.submitVote()}>
                                     Submit
                                 </Button>
-                                <Typography component="h5" variant="h5">{this.state.currentSongNumber} / {this.props.votes_required} Songs</Typography>
+                                
+                                
+                                <Typography component="h5" variant="h5">{this.state.currentSongNumber} / {this.props.votes_required} {this.props.checkHost} {this.props.checkStarted} Songs</Typography>
                             </div>
                         </Grid>
                         <Grid item align="center" xs={4}>

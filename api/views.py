@@ -5,6 +5,9 @@ from .models import Room
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
+from spotify.models import Vote
+from django.db.models import Sum
+
 
 
 # Create your views here.
@@ -131,3 +134,23 @@ class UpdateRoom (APIView):
             return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
 
         return Response({"Bad Request": "Invalid Data..."}, status=status.HTTP_400_BAD_REQUEST)
+    
+class GetVotes (APIView):
+    def get(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        room_code = self.request.session.get("room_code")
+        room = Room.objects.filter(code=room_code)[0]
+        votes = Vote.objects.filter(room=room, song_id=room.current_song)
+        avg_score = 0
+        print(votes.aggregate(Sum("score"))["score__sum"])
+        avg_score = votes.aggregate(Sum("score"))
+
+        data = {
+            "vote_average": avg_score
+        }
+
+        votes.delete()
+
+        return JsonResponse(data, status=status.HTTP_200_OK)

@@ -113,7 +113,7 @@ export default class Room extends Component {
           </Typography>
         </Grid>
         {/* <Player accessToken={} /> */}
-        <MusicPlayer {...this.state.song} />
+        <MusicPlayer {...this.state.song} checkHost={this.state.isHost.toString()} checkStarted={this.state.gameStarted.toString()} />
 
         {/* <Slider defaultValue={50} aria-label="Default" valueLabelDisplay="on"></Slider> */}
 
@@ -180,7 +180,7 @@ export default class Room extends Component {
   }
 
   render() {
-    if (this.state.gameStarted){
+    if (this.state.gameStarted || !this.state.isHost){
       return this.renderGame();
     }
     if (this.state.showSettings){
