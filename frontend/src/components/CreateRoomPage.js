@@ -157,13 +157,13 @@ export default class CreateRoomPage extends Component {
               <FormControlLabel
                 value="true"
                 control={<Radio color="primary" />}
-                label="Game Mode 1"
+                label="Single Player"
                 labelPlacement="bottom"
               />
               <FormControlLabel
                 value="false"
                 control={<Radio color="secondary" />}
-                label="Game Mode 2"
+                label="Multiplayer"
                 labelPlacement="bottom"
               />
             </RadioGroup>

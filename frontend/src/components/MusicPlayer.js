@@ -13,6 +13,7 @@ export default class MusicPlayer extends Component {
         this.renderResults = this.renderResults.bind(this);
         this.renderLeaderboard = this.renderLeaderboard.bind(this);
         this.renderSkipButton = this.renderSkipButton.bind(this);
+        this.renderSongsLeft = this.renderSongsLeft.bind(this);
     }
     leaderboard = [];
 
@@ -36,7 +37,7 @@ export default class MusicPlayer extends Component {
                             </Grid>
                             <Grid item xs={8}>
                                 <Typography key={index} component="h5" variant="h5">
-                                    {typoProps.name} - {typoProps.score}
+                                    {typoProps.name} - {typoProps.score} - {this.props.checkHost == "true" ? typoProps.average : "N/A"}
                                 </Typography>
                             </Grid>
                         </Card>
@@ -70,6 +71,14 @@ export default class MusicPlayer extends Component {
         );
     }
 
+    renderSongsLeft() {
+        return(
+            <Grid item align="center" xs={12}>
+                <Typography component="h5" variant="h5">{this.state.currentSongNumber} / {this.props.votes_required} Songs</Typography>
+            </Grid>
+        );
+    }
+
     skipSong(){
         this.setState({
             sliderValue: 50
@@ -85,7 +94,8 @@ export default class MusicPlayer extends Component {
     }
 
     submitVote(){
-        this.leaderboard.push({image: this.props.image_url, name: this.props.title, score: this.state.sliderValue});
+
+        //this.leaderboard.push({image: this.props.image_url, name: this.props.title, score: this.state.sliderValue});
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -93,25 +103,27 @@ export default class MusicPlayer extends Component {
                 score: this.state.sliderValue,
               }),
         };
-        fetch("/spotify/skip", requestOptions);
 
-        if (this.props.checkHost === "true"){
-            fetch("/api/get-votes")
+        fetch("/spotify/skip", requestOptions)
             .then((response) => response.json())
             .then((data) => {
             console.log(data.vote_average)
-            //to do: show the value on the frontend
-            });
-        }
-        this.setState({
-            currentSongNumber: this.state.currentSongNumber + 1,
-            sliderValue: 50
-          });
-        if (this.state.currentSongNumber == this.props.votes_required){
+            this.leaderboard.push({image: this.props.image_url, name: this.props.title, score: this.state.sliderValue, average: data.vote_average});
             this.setState({
-                gameEnded: true
+                currentSongNumber: this.state.currentSongNumber + 1,
+                sliderValue: 50
+              });
             });
+
+        if (this.props.checkHost == "true"){
+            fetch("/api/delete-votes");
+            if (this.state.currentSongNumber == this.props.votes_required){
+                this.setState({
+                    gameEnded: true
+                });
+            }
         }
+        
     }
     
 
@@ -157,8 +169,8 @@ export default class MusicPlayer extends Component {
                                     Submit
                                 </Button>
                                 
-                                
-                                <Typography component="h5" variant="h5">{this.state.currentSongNumber} / {this.props.votes_required} {this.props.checkHost} {this.props.checkStarted} Songs</Typography>
+                                {this.props.checkHost === "true" ? this.renderSongsLeft() : null}
+                                <Typography component="h5" variant="h5">{this.props.votes}&nbsp;Votes</Typography>
                             </div>
                         </Grid>
                         <Grid item align="center" xs={4}>

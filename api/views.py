@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from spotify.models import Vote
 from django.db.models import Sum
+from spotify.util import skip_song
 
 
 
@@ -143,14 +144,30 @@ class GetVotes (APIView):
         room_code = self.request.session.get("room_code")
         room = Room.objects.filter(code=room_code)[0]
         votes = Vote.objects.filter(room=room, song_id=room.current_song)
+        print("length: " + str(votes.count()))
         avg_score = 0
         print(votes.aggregate(Sum("score"))["score__sum"])
-        avg_score = votes.aggregate(Sum("score"))
+        #avg_score = votes.aggregate(Sum("score"))["score__sum"]/votes.count()
 
         data = {
             "vote_average": avg_score
         }
+        skip_song(room.host)
+
+
+        return JsonResponse(data, status=status.HTTP_200_OK)
+    
+class DeleteVotes (APIView):
+    def get(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        room_code = self.request.session.get("room_code")
+        room = Room.objects.filter(code=room_code)[0]
+        votes = Vote.objects.filter(room=room, song_id=room.current_song)
 
         votes.delete()
 
-        return JsonResponse(data, status=status.HTTP_200_OK)
+        print("Deleted votes successfully!")
+
+        return JsonResponse({"msg": "Deleted votes."}, status=status.HTTP_200_OK)

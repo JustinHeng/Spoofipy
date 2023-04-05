@@ -126,12 +126,12 @@ export default class Room extends Component {
         <Grid item xs={4} align="center">
           <Typography variant="h6" component="h6">Code: {this.roomCode}</Typography>
         </Grid>
-        <Grid item xs={4} align="center">
+        {/* <Grid item xs={4} align="center">
           <Typography variant="h6" component="h6">Songs: {this.state.votesToSkip}</Typography>
         </Grid>
         <Grid item xs={4} align="center">
           <Typography variant="h6" component="h6">Players: N/A</Typography>
-        </Grid>
+        </Grid> */}
       </Grid>
     );
   }
@@ -200,7 +200,7 @@ export default class Room extends Component {
           <Typography variant="h6" component="h6">Songs: {this.state.votesToSkip}</Typography>
         </Grid>
         <Grid item xs={12} align="center">
-        <Typography variant="h6" component="h6">Game Mode: {this.state.guestCanPause.toString() === "true" ? "1" : "2"}</Typography>
+        <Typography variant="h6" component="h6">Game Mode: {this.state.guestCanPause.toString() === "true" ? "Single Player" : "Multiplayer"}</Typography>
         </Grid>
         <Grid item xs={12} align="center">
           <Typography variant="h6" component="h6">{this.state.isHost.toString() === "true" ? "You are the host!" : "Waiting for host..."}</Typography>

@@ -8,6 +8,8 @@ from .util import *
 from api.models import Room
 from .models import Vote
 import json
+from django.db.models import Sum
+from django.http import JsonResponse
 
 
 class AuthURL(APIView):
@@ -141,13 +143,13 @@ class SkipSong(APIView):
         votes_needed = room.votes_to_skip
         data = json.loads(request.body.decode("utf-8"))
         score = data["score"]
+        vote = Vote(user=self.request.session.session_key, room=room, song_id=room.current_song, score=score)
+        vote.save()
+        avg_score = votes.aggregate(Sum("score"))["score__sum"]/votes.count()
+        print(avg_score)
+        data = {"vote_average": str(avg_score)}
 
-        if self.request.session.session_key == room.host:# or len(votes) + 1 >= votes_needed:
-            vote = Vote(user=self.request.session.session_key, room=room, song_id=room.current_song, score=score)
-            vote.save()
+        if self.request.session.session_key == room.host:
             skip_song(room.host)
-        else:
-            vote = Vote(user=self.request.session.session_key, room=room, song_id=room.current_song, score=score)
-            vote.save()
 
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data, status=status.HTTP_200_OK)
