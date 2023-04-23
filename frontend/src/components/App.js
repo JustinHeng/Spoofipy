@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import HomePage from "./HomePage";
+import { Grid, Typography} from "@material-ui/core";
 
 export default class App extends Component {
   constructor(props) {
@@ -9,9 +10,18 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="center">
-        <HomePage />
-      </div>
+        
+        <div style={{ 
+          backgroundImage: "url('/static/images/background.jpg')", 
+          backgroundSize: "cover", 
+          backgroundPosition: "center center", 
+          height: "100vh"
+        }}>
+          <div class="center">
+            <HomePage />
+          </div>    
+        </div>
+          
     );
   }
 }

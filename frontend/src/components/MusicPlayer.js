@@ -31,13 +31,22 @@ export default class MusicPlayer extends Component {
                 </Typography>
                 {this.leaderboard.map((typoProps, index) => (
                     <Grid container>
-                        <Card>
+                        <Card variant="outlined">
                             <Grid item xs={4}>
                                 <img src={typoProps.image} height="33%" width="33%"></img>
                             </Grid>
                             <Grid item xs={8}>
-                                <Typography key={index} component="h5" variant="h5">
+                                {/* <Typography key={index} component="h5" variant="h5">
                                     {typoProps.name} - {typoProps.score} - {this.props.checkHost == "true" ? typoProps.average : "N/A"}
+                                </Typography> */}
+                                <Typography key={index} component="h5" variant="h5">
+                                    {typoProps.name}
+                                </Typography>
+                                <Typography key={index} component="h5" variant="h5">
+                                    Your rating: {typoProps.score}
+                                </Typography>
+                                <Typography key={index} component="h5" variant="h5">
+                                    Room rating: {this.props.checkHost == "true" ? typoProps.average : "N/A"}
                                 </Typography>
                             </Grid>
                         </Card>
